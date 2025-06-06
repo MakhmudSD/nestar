@@ -17,37 +17,33 @@ export class MemberService {
 			const result = await this.memberModel.create(input);
 			return result;
 		} catch (err) {
-			console.log('ERROR on service Model of signup', err);
-			throw new BadRequestException(err);
+			console.log('ERROR on service Model of signup', err.message);
+			throw new BadRequestException(Message.USED_MEMBER_NICK_OR_PHONE);
 		}
 	}
 
 	public async login(input: LoginInput): Promise<Member> {
 		const { memberNick, memberPassword } = input;
-		const response = await this.memberModel
-		  .findOne({ memberNick })
-		  .select('+memberPassword')
-		  .exec();
-	  
+		const response = await this.memberModel.findOne({ memberNick }).select('+memberPassword').exec();
+
 		if (!response) {
-		  throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
+			throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
 		}
-	  
+
 		if (response.memberStatus === MemberStatus.DELETE) {
-		  throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
+			throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
 		} else if (response.memberStatus === MemberStatus.BLOCK) {
-		  throw new InternalServerErrorException(Message.BLOCKED_USER);
+			throw new InternalServerErrorException(Message.BLOCKED_USER);
 		}
-	  
+
 		// TODO: compare passwords
 		const isMatch = memberPassword === response.memberPassword;
 		if (!isMatch) {
-		  throw new InternalServerErrorException(Message.WRONG_PASSWORD);
+			throw new InternalServerErrorException(Message.WRONG_PASSWORD);
 		}
-	  
+
 		return response;
-	  }
-	  
+	}
 
 	public async updateMember(): Promise<string> {
 		return 'updateMember executed';
