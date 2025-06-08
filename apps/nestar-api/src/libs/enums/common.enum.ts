@@ -6,7 +6,7 @@ export enum Message {
 	REMOVE_FAILED = 'Remove is failed',
 	UPLOAD_FAILED = 'Upload is failed',
 	BAD_REQUEST = 'Bad Request',
-
+	NO_PASSWORD_FOUND = "You have not inserted the password",
 	USED_MEMBER_NICK_OR_PHONE = 'Already registered nick or phone number',
 	NO_MEMBER_NICK = 'No member with that nick or phone exists',
 	WRONG_PASSWORD = 'The password is invalid, please try again',
