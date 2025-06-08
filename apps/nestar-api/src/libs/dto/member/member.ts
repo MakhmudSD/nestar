@@ -33,7 +33,7 @@ export class Member {
 	@Field(() => String, { nullable: true })
 	memberAddress: string;
 
-	@Field(() => String , { nullable: true })
+	@Field(() => String, { nullable: true })
 	memberDesc: string;
 
 	@Field(() => Int)
@@ -77,4 +77,7 @@ export class Member {
 
 	@Field(() => Date, { nullable: true })
 	updatedAt: Date;
+
+	@Field(() => String, { nullable: true })
+	accessToken?: String;
 }

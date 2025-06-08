@@ -7,6 +7,7 @@ import { MemberStatus } from '../../libs/enums/member.enum';
 import { Message } from '../../libs/enums/common.enum';
 import { response } from 'express';
 import { AuthService } from '../auth/auth.service';
+import { ServerResponse } from 'http';
 
 @Injectable()
 export class MemberService {
@@ -16,10 +17,10 @@ export class MemberService {
 	) {}
 
 	public async signup(input: MemberInput): Promise<Member> {
-		// TODO: Hash expected
 		input.memberPassword = await this.authService.hashPassword(input.memberPassword);
 		try {
 			const result = await this.memberModel.create(input);
+			result.accessToken = await this.authService.createToken(result);
 			return result;
 		} catch (err) {
 			console.log('ERROR on service Model of signup', err.message);
@@ -30,25 +31,25 @@ export class MemberService {
 	public async login(input: LoginInput): Promise<Member> {
 		const { memberNick, memberPassword } = input;
 		const response = await this.memberModel.findOne({ memberNick }).select('+memberPassword').exec();
-	  
+
 		if (!response || response.memberStatus === MemberStatus.DELETE) {
-		  throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
+			throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
 		} else if (response.memberStatus === MemberStatus.BLOCK) {
-		  throw new InternalServerErrorException(Message.BLOCKED_USER);
+			throw new InternalServerErrorException(Message.BLOCKED_USER);
 		}
-	  
+
 		if (!response.memberPassword) {
-		  throw new InternalServerErrorException(Message.NO_PASSWORD_FOUND);
+			throw new InternalServerErrorException(Message.NO_PASSWORD_FOUND);
 		}
-	  
+
 		const isMatch = await this.authService.comparePasswords(input.memberPassword, response.memberPassword);
 		if (!isMatch) {
-		  throw new InternalServerErrorException(Message.WRONG_PASSWORD);
+			throw new InternalServerErrorException(Message.WRONG_PASSWORD);
 		}
-	  
+
+		response.accessToken = await this.authService.createToken(response);
 		return response;
-	  }
-	  
+	}
 
 	public async updateMember(): Promise<string> {
 		return 'updateMember executed';
