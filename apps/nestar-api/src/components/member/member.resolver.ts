@@ -1,6 +1,5 @@
 import { Mutation, Resolver, Query, Args } from '@nestjs/graphql';
 import { MemberService } from './member.service';
-import { InternalServerErrorException, UsePipes, ValidationPipe } from '@nestjs/common';
 import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { Member } from '../../libs/dto/member/member';
 
@@ -20,6 +19,7 @@ export class MemberResolver {
 		return this.memberService.login(input);
 	}
 
+	// Authenticated only
 	@Mutation(() => String)
 	public async updateMember(): Promise<String> {
 		console.log('Mutation: updateMember');
@@ -30,5 +30,21 @@ export class MemberResolver {
 	public async getMember(): Promise<String> {
 		console.log('Mutation: getMember');
 		return this.memberService.getMember();
+	}
+
+	/** ADMIN **/
+
+	// Authorization: ADMIN
+	@Mutation(() => String)
+	public async updateMemberByAdmin(): Promise<String> {
+		console.log('Mutation: updateMemberByAdmin');
+		return this.memberService.updateMemberByAdmin();
+	}
+
+	// Authorization: ADMIN
+	@Mutation(() => String)
+	public async getAllMembersByAdmin(): Promise<string> {
+		console.log('Mutation: getAllMembersByAdmin');
+		return this.memberService.getAllMembersByAdmin();
 	}
 }
