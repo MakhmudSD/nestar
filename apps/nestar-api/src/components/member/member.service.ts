@@ -5,9 +5,7 @@ import { Member } from '../../libs/dto/member/member';
 import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { MemberStatus } from '../../libs/enums/member.enum';
 import { Message } from '../../libs/enums/common.enum';
-import { response } from 'express';
 import { AuthService } from '../auth/auth.service';
-import { ServerResponse } from 'http';
 
 @Injectable()
 export class MemberService {
@@ -60,7 +58,6 @@ export class MemberService {
 	}
 
 	/** ADMIN **/
-
 
 	public async updateMemberByAdmin(): Promise<string> {
 		return 'updateMemberByAdmin executed';
