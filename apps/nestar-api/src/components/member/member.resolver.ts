@@ -11,6 +11,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { ObjectId } from 'mongoose';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { WithoutGuard } from '../auth/guards/without.guard';
+import { ObjMapLike } from 'graphql/jsutils/ObjMap';
 
 @Resolver()
 export class MemberResolver {
@@ -56,11 +58,12 @@ export class MemberResolver {
 		return this.memberService.updateMember(memberId, input);
 	}
 
+	@UseGuards(WithoutGuard)
 	@Query(() => Member)
-	public async getMember(@Args('memberId') input: string): Promise<Member> {
+	public async getMember(@Args('memberId') input: string, memberId: ObjectId): Promise<Member> {
 		console.log('Mutation: getMember');
 		const targetId = shapeIntoMongoObjectId(input);
-		return this.memberService.getMember(targetId);
+		return this.memberService.getMember(memberId, targetId);
 	}
 
 	/** ADMIN **/
