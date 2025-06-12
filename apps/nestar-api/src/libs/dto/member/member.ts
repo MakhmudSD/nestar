@@ -39,14 +39,14 @@ export class Member {
 	@Field(() => Int)
 	memberProperties: number;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Int, { nullable: true })
 	memberArticles: number;
 
 	@Field(() => Int)
 	memberFollowers: number;
 
 	@Field(() => Int)
-	memberFollowing: number;
+	memberFollowings: number;
 
 	@Field(() => Int)
 	memberPoints: number;

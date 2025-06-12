@@ -22,6 +22,7 @@ export class ViewService {
 		}
 		return null;
 	}
+	
 	public async checkViewExistence(input: ViewInput): Promise<View | null> {
 		const { memberId, viewRefId } = input;
 		const search: T = {

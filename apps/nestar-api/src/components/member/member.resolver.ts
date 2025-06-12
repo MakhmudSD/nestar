@@ -12,7 +12,6 @@ import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { ObjectId } from 'mongoose';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { WithoutGuard } from '../auth/guards/without.guard';
-import { ObjMapLike } from 'graphql/jsutils/ObjMap';
 
 @Resolver()
 export class MemberResolver {

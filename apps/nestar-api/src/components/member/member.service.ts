@@ -1,4 +1,3 @@
-import { ViewInput } from './../../libs/dto/view/view.input';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
