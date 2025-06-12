@@ -61,7 +61,7 @@ const MemberSchema = new Schema(
 			default: 0,
 		},
 
-		memberArticle: {
+		memberArticles: {
 			type: Number,
 			default: 0,
 		},
@@ -71,7 +71,7 @@ const MemberSchema = new Schema(
 			default: 0,
 		},
 
-		memberFollowing: {
+		memberFollowings: {
 			type: Number,
 			default: 0,
 		},
