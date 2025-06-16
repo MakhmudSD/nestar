@@ -2,7 +2,12 @@ import { PropertyStatus } from './../../libs/enums/property.enum';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { AgentsPropertiesInquiry, AllPropertiesInquiry, PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
+import {
+	AgentsPropertiesInquiry,
+	AllPropertiesInquiry,
+	PropertiesInquiry,
+	PropertyInput,
+} from '../../libs/dto/property/property.input';
 import { Properties, Property } from '../../libs/dto/property/property';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { MemberService } from '../member/member.service';
@@ -37,7 +42,6 @@ export class PropertyService {
 			_id: propertyId,
 			propertyStatus: PropertyStatus.ACTIVE,
 		};
-		
 
 		const targetProperty: Property | null = await this.propertyModel.findOne(search).lean().exec();
 		if (!targetProperty) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
@@ -53,16 +57,6 @@ export class PropertyService {
 
 		targetProperty.memberData = await this.memberService.getMember(null, targetProperty.memberId);
 		return targetProperty;
-	}
-
-	public async propertyStatsEditor(input: StatisticModifier): Promise<Property | null> {
-		const { _id, targetKey, modifier } = input;
-		const updated = await this.propertyModel
-			.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true })
-			.lean()
-			.exec();
-
-		return updated as Property | null;
 	}
 
 	public async updateProperty(memberId: ObjectId, input: PropertyUpdate): Promise<Property> {
@@ -252,5 +246,15 @@ export class PropertyService {
 		const result = await this.propertyModel.findOneAndDelete(search).exec();
 		if (!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
 		return result;
+	}
+
+	public async propertyStatsEditor(input: StatisticModifier): Promise<Property | null> {
+		const { _id, targetKey, modifier } = input;
+		const updated = await this.propertyModel
+			.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true })
+			.lean()
+			.exec();
+
+		return updated as Property | null;
 	}
 }
