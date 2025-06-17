@@ -66,8 +66,6 @@ export class BoardArticleResolver {
 	}
 
 	/** ADMIN **/
-
-	/** ADMIN **/
 	@Roles(MemberType.ADMIN)
 	@UseGuards(RolesGuard)
 	@Query((returns) => BoardArticles)
@@ -89,9 +87,9 @@ export class BoardArticleResolver {
 	@Roles(MemberType.ADMIN)
 	@UseGuards(RolesGuard)
 	@Mutation((returns) => BoardArticle)
-	public async removeBoardArticleByAdmin(@Args('propertyId') input: string): Promise<BoardArticle> {
+	public async removeBoardArticleByAdmin(@Args('articleId') input: string): Promise<BoardArticle> {
 		console.log('Mutation: removeBoardArticleByAdmin', input);
-		const propertyId = shapeIntoMongoObjectId(input);
-		return await this.boardArticleService.removeBoardArticleByAdmin(propertyId);
+		const articleId = shapeIntoMongoObjectId(input);
+		return await this.boardArticleService.removeBoardArticleByAdmin(articleId);
 	}
 }
