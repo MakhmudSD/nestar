@@ -151,7 +151,7 @@ export class PropertyService {
 		}
 	}
 
-	public async getAgentProperties(memberId: ObjectId, input: AgentsPropertiesInquiry): Promise<Properties> {
+	public async getAgentsProperties(memberId: ObjectId, input: AgentsPropertiesInquiry): Promise<Properties> {
 		const { propertyStatus } = input.search;
 		if (propertyStatus === PropertyStatus.DELETE) throw new InternalServerErrorException(Message.NOT_ALLOWED_REQUEST);
 
