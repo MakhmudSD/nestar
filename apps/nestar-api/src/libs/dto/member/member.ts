@@ -80,6 +80,11 @@ export class Member {
 
 	@Field(() => String, { nullable: true })
 	accessToken?: String;
+
+	/** from aggregation **/
+
+	@Field(() => Member, { nullable: true })
+	memberData?: Member;
 }
 
 @ObjectType()
