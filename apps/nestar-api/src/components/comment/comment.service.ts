@@ -27,8 +27,6 @@ export class CommentService {
 		try {
 			result = await this.commentModel.create(input);
 		} catch (err) {
-			console.log('ERROR on service Model of createComment', err.message);
-			throw new BadRequestException(Message.CREATE_FAILED);
 		}
 
 		switch (input.commentGroup) {

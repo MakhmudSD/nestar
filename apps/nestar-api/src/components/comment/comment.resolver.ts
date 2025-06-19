@@ -26,8 +26,6 @@ export class CommentResolver {
 		return await this.commentService.createComment(memberId, input);
 	}
 
-	@UseGuards(AuthGuard)
-	@Mutation((returns) => Comment)
 	public async updateComment(
 		@Args('input') input: CommentUpdate,
 		@AuthMember('_id') memberId: ObjectId,
