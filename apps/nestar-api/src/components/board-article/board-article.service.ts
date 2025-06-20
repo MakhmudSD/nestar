@@ -58,6 +58,10 @@ export class BoardArticleService {
 			}
 		}
 
+		const likeInput = { memberId: memberId, likeRefId: articleId, likeGroup: LikeGroup.ARTICLE };
+		targetBoardArticle.meLiked = await this.likeService.checkLikeExistence(likeInput as LikeInput);
+		//meFollowed
+
 		targetBoardArticle.memberData = await this.memberService.getMember(null, targetBoardArticle.memberId);
 		return targetBoardArticle;
 	}
@@ -128,7 +132,6 @@ export class BoardArticleService {
 						list: [
 							{ $skip: (input.page - 1) * input.limit },
 							{ $limit: input.limit },
-							// meLiked
 							lookupMember,
 							{ $unwind: { path: '$memberData', preserveNullAndEmptyArrays: true } },
 						],

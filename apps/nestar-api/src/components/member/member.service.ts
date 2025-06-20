@@ -74,7 +74,7 @@ export class MemberService {
 				$in: [MemberStatus.ACTIVE, MemberStatus.BLOCK],
 			},
 		};
-		const targetMember = await this.memberModel.findOne(search).lean().exec();
+		const targetMember: any = await this.memberModel.findOne(search).lean().exec();
 		if (!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		if (memberId) {
@@ -84,10 +84,11 @@ export class MemberService {
 				await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
 				targetMember.memberViews++;
 			}
-		}
 
-		//meLiked
-		//meFollowed
+			const likeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
+			targetMember.meLiked = await this.likeService.checkLikeExistence(likeInput as LikeInput);
+			//meFollowed
+		}
 		return targetMember;
 	}
 
@@ -125,7 +126,7 @@ export class MemberService {
 			likeGroup: LikeGroup.MEMBER,
 		};
 
-		const modifier: number = await this.likeService.toggleLike(input)
+		const modifier: number = await this.likeService.toggleLike(input);
 		const result = await this.memberStatsEditor({ _id: likeRefId, targetKey: 'memberLikes', modifier: modifier });
 
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
