@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 import { Like, MeLiked } from '../../libs/dto/like/like';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { T } from '../../libs/types/common';

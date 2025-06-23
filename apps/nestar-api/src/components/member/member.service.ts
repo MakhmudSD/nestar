@@ -90,14 +90,14 @@ export class MemberService {
 				targetMember.memberViews++;
 			}
 
-			const likeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
-			targetMember.meLiked = await this.likeService.checkLikeExistence(likeInput as LikeInput);
-			targetMember.MeFollowed = await this.checkSubscription(memberId, targetId);
+			const likeInput: LikeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
+			targetMember.meLiked = await this.likeService.checkLikeExistence(likeInput);
+			targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
 		}
 		return targetMember;
 	}
 
-	private async checkSubscription(followingId: ObjectId, followerId): Promise<MeFollowed[]> {
+	private async checkSubscription(followingId: ObjectId, followerId: ObjectId): Promise<MeFollowed[]> {
 		const result = await this.followModel.findOne({ followerId: followerId, followingId: followingId }).exec();
 		return result ? [{ followerId: followerId, followingId: followingId, myFollowing: true }] : [];
 	}
@@ -127,7 +127,7 @@ export class MemberService {
 	}
 
 	public async likeTargetMember(memberId: ObjectId, likeRefId: ObjectId): Promise<Member> {
-		const target: Member | null = await this.memberModel.findOne({ _id: likeRefId, memberStatus: MemberStatus.ACTIVE });
+		const target = await this.memberModel.findOne({ _id: likeRefId, memberStatus: MemberStatus.ACTIVE });
 		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		const input: LikeInput = {
