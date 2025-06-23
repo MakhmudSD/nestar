@@ -27,7 +27,7 @@ export class PropertyService {
 		@InjectModel('Property') private readonly propertyModel: Model<Property | null>,
 		private memberService: MemberService,
 		private viewService: ViewService,
-		private readonly likeService: LikeService
+		private readonly likeService: LikeService,
 	) {}
 
 	public async createProperty(input: PropertyInput): Promise<Property> {
@@ -61,29 +61,30 @@ export class PropertyService {
 
 		const likeInput = { memberId: memberId, likeRefId: propertyId, likeGroup: LikeGroup.PROPERTY };
 		targetProperty.meLiked = await this.likeService.checkLikeExistence(likeInput as LikeInput);
-		
 
 		targetProperty.memberData = await this.memberService.getMember(null, targetProperty.memberId);
 		return targetProperty;
 	}
 
+	public async likeTargetProperty(memberId: ObjectId, likeRefId: ObjectId): Promise<Property> {
+		const target: Property | null = await this.propertyModel.findOne({
+			_id: likeRefId,
+			propertyStatus: PropertyStatus.ACTIVE,
+		});
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-		public async likeTargetProperty(memberId: ObjectId, likeRefId: ObjectId): Promise<Property> {
-			const target: Property | null = await this.propertyModel.findOne({ _id: likeRefId, propertyStatus: PropertyStatus.ACTIVE });
-			if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
-	
-			const input: LikeInput = {
-				memberId: memberId,
-				likeRefId: likeRefId,
-				likeGroup: LikeGroup.PROPERTY,
-			};
-	
-			const modifier: number = await this.likeService.toggleLike(input)
-			const result = await this.propertyStatsEditor({ _id: likeRefId, targetKey: 'propertyLikes', modifier: modifier });
-	
-			if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
-			return result;
-		}
+		const input: LikeInput = {
+			memberId: memberId,
+			likeRefId: likeRefId,
+			likeGroup: LikeGroup.PROPERTY,
+		};
+
+		const modifier: number = await this.likeService.toggleLike(input);
+		const result = await this.propertyStatsEditor({ _id: likeRefId, targetKey: 'propertyLikes', modifier: modifier });
+
+		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+		return result;
+	}
 
 	public async updateProperty(memberId: ObjectId, input: PropertyUpdate): Promise<Property> {
 		const { propertyStatus } = input;
