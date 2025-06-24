@@ -5,6 +5,7 @@ import { Model, ObjectId } from 'mongoose';
 import {
 	AgentsPropertiesInquiry,
 	AllPropertiesInquiry,
+	OrdinaryInquiry,
 	PropertiesInquiry,
 	PropertyInput,
 } from '../../libs/dto/property/property.input';
@@ -30,6 +31,7 @@ export class PropertyService {
 		private readonly likeService: LikeService,
 	) {}
 
+	// createProperty
 	public async createProperty(input: PropertyInput): Promise<Property> {
 		try {
 			const result: any = await this.propertyModel.create(input);
@@ -41,6 +43,7 @@ export class PropertyService {
 		}
 	}
 
+	// getProperty
 	public async getProperty(memberId: ObjectId, propertyId: ObjectId): Promise<Property> {
 		const search: T = {
 			_id: propertyId,
@@ -66,6 +69,7 @@ export class PropertyService {
 		return targetProperty;
 	}
 
+	// likeTargetProperty
 	public async likeTargetProperty(memberId: ObjectId, likeRefId: ObjectId): Promise<Property> {
 		const target: Property | null = await this.propertyModel.findOne({
 			_id: likeRefId,
@@ -86,6 +90,7 @@ export class PropertyService {
 		return result;
 	}
 
+	// updateProperty
 	public async updateProperty(memberId: ObjectId, input: PropertyUpdate): Promise<Property> {
 		const { propertyStatus } = input;
 
@@ -114,6 +119,7 @@ export class PropertyService {
 		return result;
 	}
 
+	// getProperties
 	public async getProperties(memberId: ObjectId, input: PropertiesInquiry): Promise<Properties> {
 		const match: T = { propertyStatus: PropertyStatus.ACTIVE };
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
@@ -145,6 +151,7 @@ export class PropertyService {
 		return result[0];
 	}
 
+	// shapeMatchQuery
 	private shapeMatchQuery(match: T, input: PropertiesInquiry): void {
 		const search = input.search;
 		if (!search) return;
@@ -178,6 +185,12 @@ export class PropertyService {
 		}
 	}
 
+	// getFavorites
+	public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Properties> {
+		return await this.likeService.getFavoriteProperties(memberId, input)
+	}
+
+	//getAgentsProperties
 	public async getAgentsProperties(memberId: ObjectId, input: AgentsPropertiesInquiry): Promise<Properties> {
 		const { propertyStatus } = input.search;
 		if (propertyStatus === PropertyStatus.DELETE) throw new InternalServerErrorException(Message.NOT_ALLOWED_REQUEST);
@@ -210,6 +223,7 @@ export class PropertyService {
 		return result[0];
 	}
 
+	// getAllPropertiesByAdmin
 	public async getAllPropertiesByAdmin(memberId: ObjectId, input: AllPropertiesInquiry): Promise<Properties> {
 		const { propertyStatus, propertyLocationList } = input.search;
 		const match: T = {};
@@ -242,6 +256,7 @@ export class PropertyService {
 		return result[0];
 	}
 
+	// updatePropertyByAdmin
 	public async updatePropertyByAdmin(input: PropertyUpdate): Promise<Property> {
 		let { propertyStatus, soldAt, deletedAt } = input;
 		const search: T = {
@@ -265,6 +280,7 @@ export class PropertyService {
 		return result;
 	}
 
+	// removePropertyByAdmin
 	public async removePropertyByAdmin(propertyId: ObjectId): Promise<Property> {
 		const search: T = {
 			_id: propertyId,
