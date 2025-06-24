@@ -28,6 +28,7 @@ export class MemberService {
 		private likeService: LikeService,
 	) {}
 
+	// signup
 	public async signup(input: MemberInput): Promise<Member> {
 		input.memberPassword = await this.authService.hashPassword(input.memberPassword);
 		try {
@@ -40,6 +41,7 @@ export class MemberService {
 		}
 	}
 
+	// login
 	public async login(input: LoginInput): Promise<Member> {
 		const { memberNick, memberPassword } = input;
 		const response = await this.memberModel.findOne({ memberNick }).select('+memberPassword').exec();
@@ -63,6 +65,7 @@ export class MemberService {
 		return response;
 	}
 
+	// updateMember
 	public async updateMember(memberId: ObjectId, input: MemberUpdate): Promise<Member> {
 		const result: Member | null = await this.memberModel
 			.findOneAndUpdate({ _id: memberId, memberStatus: MemberStatus.ACTIVE }, input, { new: true })
@@ -72,6 +75,7 @@ export class MemberService {
 		return result;
 	}
 
+	// getMember
 	public async getMember(memberId: ObjectId | null, targetId: ObjectId): Promise<Member> {
 		const search: T = {
 			_id: targetId,
@@ -97,11 +101,13 @@ export class MemberService {
 		return targetMember;
 	}
 
+	// checkSubscription
 	private async checkSubscription(followingId: ObjectId, followerId: ObjectId): Promise<MeFollowed[]> {
 		const result = await this.followModel.findOne({ followerId: followerId, followingId: followingId }).exec();
 		return result ? [{ followerId: followerId, followingId: followingId, myFollowing: true }] : [];
 	}
 
+	// getAgents
 	public async getAgents(memberId: ObjectId, input: AgentsInquiry): Promise<Members> {
 		const { text } = input.search;
 		const match: T = { memberType: MemberType.AGENT, memberStatus: MemberStatus.ACTIVE };
@@ -126,6 +132,7 @@ export class MemberService {
 		return result[0];
 	}
 
+	// likeTargetMember
 	public async likeTargetMember(memberId: ObjectId, likeRefId: ObjectId): Promise<Member> {
 		const target = await this.memberModel.findOne({ _id: likeRefId, memberStatus: MemberStatus.ACTIVE });
 		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
@@ -145,6 +152,7 @@ export class MemberService {
 
 	/** ADMIN **/
 
+	// getAllMembersByAdmin
 	public async getAllMembersByAdmin(input: MembersInquiry): Promise<Members> {
 		const { memberStatus, memberType, text } = input.search;
 		const match: T = {};
@@ -171,6 +179,7 @@ export class MemberService {
 		return result[0];
 	}
 
+	// updateMemberByAdmin
 	public async updateMemberByAdmin(input: MemberUpdate): Promise<Member> {
 		const result: Member | null = await this.memberModel
 			.findOneAndUpdate({ _id: input._id }, input, { new: true })
@@ -180,6 +189,7 @@ export class MemberService {
 		return result;
 	}
 
+	// memberStatsEditor
 	public async memberStatsEditor(input: StatisticModifier): Promise<Member | null> {
 		const { _id, targetKey, modifier } = input;
 		return (

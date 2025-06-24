@@ -21,13 +21,13 @@ export class CommentService {
 		private readonly boardArticleService: BoardArticleService,
 	) {}
 
+	// createComment
 	public async createComment(memberId: ObjectId, input: CommentInput): Promise<Comment> {
 		input.memberId = memberId;
 		let result: Comment | null = null;
 		try {
 			result = await this.commentModel.create(input);
-		} catch (err) {
-		}
+		} catch (err) {}
 
 		switch (input.commentGroup) {
 			case CommentGroup.PROPERTY:
@@ -63,6 +63,7 @@ export class CommentService {
 		return result;
 	}
 
+	// updateComment
 	public async updateComment(memberId: ObjectId, input: CommentUpdate): Promise<Comment> {
 		const { _id } = input;
 
@@ -75,6 +76,7 @@ export class CommentService {
 		return result;
 	}
 
+	// getComments
 	public async getComments(memberId: ObjectId, input: CommentsInquiry): Promise<Comments> {
 		const { commentRefId } = input.search;
 		const match: T = { commentRefId: commentRefId, commentStatus: CommentStatus.ACTIVE };
@@ -102,12 +104,14 @@ export class CommentService {
 		return result[0];
 	}
 
+	// removeCommentByAdmin
 	public async removeCommentByAdmin(input: ObjectId): Promise<Comment> {
 		const result = await this.commentModel.findByIdAndDelete(input).exec();
 		if (!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
 		return result;
 	}
 
+	// commentStatsEditor
 	public async commentStatsEditor(input: StatisticModifier): Promise<Comment | null> {
 		const { _id, targetKey, modifier } = input;
 		const updated = await this.commentModel

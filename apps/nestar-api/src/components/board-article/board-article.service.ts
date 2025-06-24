@@ -29,6 +29,7 @@ export class BoardArticleService {
 		private readonly likeService: LikeService,
 	) {}
 
+	// createBoardArticle
 	public async createBoardArticle(memberId: ObjectId, input: BoardArticleInput): Promise<BoardArticle> {
 		input.memberId = memberId;
 		try {
@@ -41,6 +42,7 @@ export class BoardArticleService {
 		}
 	}
 
+	// getBoardArticle
 	public async getBoardArticle(memberId: ObjectId, articleId: ObjectId): Promise<BoardArticle> {
 		const search: T = {
 			_id: articleId,
@@ -67,6 +69,7 @@ export class BoardArticleService {
 		return targetBoardArticle;
 	}
 
+	// updateBoardArticle
 	public async updateBoardArticle(memberId: ObjectId, input: BoardArticleUpdate): Promise<BoardArticle> {
 		const { _id, articleStatus } = input;
 
@@ -88,6 +91,7 @@ export class BoardArticleService {
 		return result;
 	}
 
+	// likeTargetBoardArticle
 	public async likeTargetBoardArticle(memberId: ObjectId, likeRefId: ObjectId): Promise<BoardArticle> {
 		const target: BoardArticle | null = await this.boardArticleModel.findOne({
 			_id: likeRefId,
@@ -112,6 +116,7 @@ export class BoardArticleService {
 		return result;
 	}
 
+	// getBoardArticles
 	public async getBoardArticles(memberId: ObjectId, input: BoardArticlesInquiry): Promise<BoardArticles> {
 		const { articleCategory, text } = input.search;
 		const match: T = { articleStatus: BoardArticleStatus.ACTIVE };
@@ -147,6 +152,7 @@ export class BoardArticleService {
 		return result[0];
 	}
 
+	// getAllBoardArticlesByAdmin
 	public async getAllBoardArticlesByAdmin(memberId: ObjectId, input: AllBoardArticlesInquiry): Promise<BoardArticles> {
 		const { articleStatus, articleCategory } = input.search;
 		const match: T = {};
@@ -179,6 +185,7 @@ export class BoardArticleService {
 		return result[0];
 	}
 
+	// updateBoardArticleByAdmin
 	public async updateBoardArticleByAdmin(input: BoardArticleUpdate): Promise<BoardArticle> {
 		const { _id, articleStatus } = input;
 
@@ -197,6 +204,7 @@ export class BoardArticleService {
 		return result;
 	}
 
+	// removeBoardArticleByAdmin
 	public async removeBoardArticleByAdmin(articleId: ObjectId): Promise<BoardArticle> {
 		const search: T = {
 			_id: articleId,
@@ -207,6 +215,7 @@ export class BoardArticleService {
 		return result;
 	}
 
+	// boardArticleStatsEditor
 	public async boardArticleStatsEditor(input: StatisticModifier): Promise<BoardArticle | null> {
 		const { _id, targetKey, modifier } = input;
 		const updated = await this.boardArticleModel

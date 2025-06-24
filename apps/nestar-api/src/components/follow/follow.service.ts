@@ -6,7 +6,12 @@ import { Follower, Followers, Following, Followings } from '../../libs/dto/follo
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { FollowInquiry } from '../../libs/dto/follow/follow.input';
 import { T } from '../../libs/types/common';
-import { lookupAuthMemberFollowed, lookupAuthMemberLiked, lookupFollowerData, lookupFollowingData } from '../../libs/config';
+import {
+	lookupAuthMemberFollowed,
+	lookupAuthMemberLiked,
+	lookupFollowerData,
+	lookupFollowingData,
+} from '../../libs/config';
 
 @Injectable()
 export class FollowService {
@@ -15,6 +20,7 @@ export class FollowService {
 		private memberService: MemberService,
 	) {}
 
+	// subscribe
 	public async subscribe(followerId: ObjectId, followingId: ObjectId): Promise<Follower> {
 		if (followerId.toString() === followingId.toString()) {
 			// reference are different so string used
@@ -32,6 +38,7 @@ export class FollowService {
 		return result;
 	}
 
+	// registerSubscription
 	private async registerSubscription(followerId: ObjectId, followingId: ObjectId): Promise<Follower> {
 		try {
 			return await this.followModel.create({
@@ -44,6 +51,7 @@ export class FollowService {
 		}
 	}
 
+	// unsubscribe
 	public async unsubscribe(followerId: ObjectId, followingId: ObjectId): Promise<Follower> {
 		const targetMember = await this.memberService.getMember(null, followingId);
 		if (!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
@@ -60,6 +68,7 @@ export class FollowService {
 		return result;
 	}
 
+	// getMemberFollowings
 	public async getMemberFollowings(memberId: ObjectId, input: FollowInquiry): Promise<Followings> {
 		const { page, limit, search } = input;
 		if (!search?.followerId) throw new InternalServerErrorException(Message.BAD_REQUEST);
@@ -75,10 +84,10 @@ export class FollowService {
 						list: [
 							{ $skip: (page - 1) * limit },
 							{ $limit: limit },
-							lookupAuthMemberLiked(memberId, "$followingId"),
-							lookupAuthMemberFollowed({followerId: memberId, followingId: "$followingId" }),
+							lookupAuthMemberLiked(memberId, '$followingId'),
+							lookupAuthMemberFollowed({ followerId: memberId, followingId: '$followingId' }),
 							lookupFollowingData,
-							{ $unwind: { path: '$followingData'} },
+							{ $unwind: { path: '$followingData' } },
 						],
 						metaCounter: [{ $count: 'total' }],
 					},
@@ -91,6 +100,7 @@ export class FollowService {
 		return result[0];
 	}
 
+	// getMemberFollowers
 	public async getMemberFollowers(memberId: ObjectId, input: FollowInquiry): Promise<Followers> {
 		const { page, limit, search } = input;
 		if (!search?.followingId) throw new InternalServerErrorException(Message.BAD_REQUEST);
@@ -106,8 +116,8 @@ export class FollowService {
 						list: [
 							{ $skip: (page - 1) * limit },
 							{ $limit: limit },
-							lookupAuthMemberLiked(memberId, "$followerId"),
-							lookupAuthMemberFollowed({followerId: memberId, followingId: "$followerId" }),
+							lookupAuthMemberLiked(memberId, '$followerId'),
+							lookupAuthMemberFollowed({ followerId: memberId, followingId: '$followerId' }),
 							lookupFollowerData,
 							{ $unwind: { path: '$followerData' } },
 						],
