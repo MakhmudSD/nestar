@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { InjectConnection, MongooseModule } from '@nestjs/mongoose';
-import { privateDecrypt } from 'crypto';
 import { Connection } from 'mongoose';
 
 @Module({
